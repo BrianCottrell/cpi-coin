@@ -163,9 +163,13 @@ You should now be able to view your new dApp from [http://localhost:3000](http:/
 ## Information to add test network to MetaMask
 
 Network Name: Celo (Alfajores Testnet)
+
 New RPC URL: https://alfajores-forno.celo-testnet.org
+
 Chain ID: 44787
+
 Currency Symbol (Optional): CELO
+
 Block Explorer URL (Optional): https://alfajores-blockscout.celo-testnet.org
 
 ## Troubleshooting
