@@ -5,15 +5,18 @@ import "openzeppelin-solidity/contracts/token/ERC20/extensions/ERC20Burnable.sol
 
 contract PureGovToken is  ERC20, ERC20Burnable {
   //We inherited the DetailedERC20
+  mapping(address => address) public balances;
+
   uint256 public genesisTime;
 
   constructor(string memory _name, string memory _symbol) ERC20("Pure Token", "PTK") {
     genesisTime = block.timestamp;
   }
 
-  function mintPure(address senderAddress, uint256 govTokenCount) public {
+  function mintPure(address senderAddress, address smartContractAddress, uint256 govTokenCount) public {
       // Convert governance tokens amount to dollars
-      uint256 conversionRate = getGovTokenPerDollar();
+      balances[senderAddress] = smartContractAddress;
+      uint256 conversionRate = (getGovTokenPerDollar() / 10);
       uint256 dollarsSpent = govTokenCount / conversionRate;
       uint256 iad = inflationAdjustedDollars(dollarsSpent);
       _mint(senderAddress, iad);
@@ -29,7 +32,14 @@ contract PureGovToken is  ERC20, ERC20Burnable {
       return res;
   }
 
-  function getGovTokenPerDollar() private pure returns (uint256) {
-      return 5; //TODO test
+  function convertToGovToken(uint256 amountToConvert) {
+    _burn(msg.sender, amountToConvert);
+    
+    address govTokenAddress = balances[msg.sender];
+    (bool s, bytes memory r) = govTokenAddress.call(abi.encodeWithSignature("mintGovToken(address,uint256)", msg.sender, amountToConvert));
+
+  }
+  function getGovTokenPerTenDollar() private pure returns (uint256) {
+      return 50; //TODO test
   }
 }
