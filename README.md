@@ -172,6 +172,9 @@ Currency Symbol (Optional): CELO
 
 Block Explorer URL (Optional): https://alfajores-blockscout.celo-testnet.org
 
+## ERC20 Link
+https://solidity-by-example.org/app/erc20/
+
 ## Troubleshooting
 
 For M1 Mac developers who have installed nvm using brew, the server may crash. To resolve this issue, take a look here at this [solution](https://stackoverflow.com/a/67254340)
