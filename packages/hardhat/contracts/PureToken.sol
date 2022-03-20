@@ -12,27 +12,26 @@ contract PureGovToken is  ERC20, ERC20Burnable {
   }
 
   function mintPure(address senderAddress, uint govTokenCount) public {
-      // Convert governance tokens amount to dollasr
+      // Convert governance tokens amount to dollars
       uint conversionRate = getGovTokenPerDollar();
-      uint256 decs = decimals();
-      uint256 dollarsSpent= govTokenCount * conversionRate * 10^decs;
+      uint256 dollarsSpent = govTokenCount * conversionRate * 10^decs;
       uint256 iud = inflationAdjustedDollars(dollarsSpent);
       
-
       _mint(senderAddress, iud);
   }
 
   function inflationAdjustedDollars(uint256 dollarsSpent) private returns (uint256) {
     uint256 currTime = block.timestamp;
-    uint256 daysSinceGenesis = currTime - genesisTime;
-    daysSinceGenesis =  daysSinceGenesis / (60 * 60 * 24 * 30);    
+    uint256 secsSinceGenesis = currTime - genesisTime;
+    uint256 monthsSinceGenesis = secsSinceGenesis / (60 * 60 * 24 * 30);
+    uint256 numerator = 98 ** monthsSinceGenesis;
+    uint256 denominatorPow = (2 * monthsSinceGenesis) - 18;
 
-    uint256 inflationAdjustmentNumerator = 100004 ** daysSinceGenesis;
-    uint256 inflationAdjustmentDenominator = 100000 ** daysSinceGenesis;
-
-    uint256 inflationAdjustedDollars = dollarsSpent * inflationAdjustmentNumerator;
-    inflationAdjustedDollars = inflationAdjustedDollars / inflationAdjustmentDenominator;
-    return inflationAdjustedDollars;
+    if (denominatorPow < 0) {
+        uint256 numeratorPow = -1 * denominatorPow;
+        return numerator * 10^numeratorPow * dollarsSpent;
+    }
+    return (numerator * dollarsSpent) / 10^denominatorPow;
   }
   
         
