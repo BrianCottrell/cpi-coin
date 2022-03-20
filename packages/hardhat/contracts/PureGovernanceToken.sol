@@ -4,7 +4,7 @@ import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
 
-contract PureGovToken is ERC20, ERC20Burnable {
+contract PureGovernanceToken is ERC20, ERC20Burnable {
   event Debug(bool s, bytes r);
   event DebugUint(uint256 u);
   

@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
-contract PureGovToken is  ERC20, ERC20Burnable {
+contract PureToken is  ERC20, ERC20Burnable {
   event Debug(bool s, bytes r);
 
   //We inherited the DetailedERC20

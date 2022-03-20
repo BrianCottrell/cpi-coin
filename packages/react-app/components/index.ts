@@ -1,3 +1,5 @@
 export * from './ButtonAppBar'
 export * from './StorageContract'
 export * from './GreeterContract'
+export * from './PureTokenContract'
+export * from './PureGovernanceTokenContract'
