@@ -1,117 +1,33 @@
-pragma solidity ^0.4.24;
- 
-//Safe Math Interface
- 
-contract SafeMath {
- 
-    function safeAdd(uint a, uint b) public pure returns (uint c) {
-        c = a + b;
-        require(c >= a);
-    }
- 
-    function safeSub(uint a, uint b) public pure returns (uint c) {
-        require(b <= a);
-        c = a - b;
-    }
- 
-    function safeMul(uint a, uint b) public pure returns (uint c) {
-        c = a * b;
-        require(a == 0 || c / a == b);
-    }
- 
-    function safeDiv(uint a, uint b) public pure returns (uint c) {
-        require(b > 0);
-        c = a / b;
-    }
-}
- 
- 
-//ERC Token Standard #20 Interface
- 
-contract ERC20Interface {
-    function totalSupply() public constant returns (uint);
-    function balanceOf(address tokenOwner) public constant returns (uint balance);
-    function allowance(address tokenOwner, address spender) public constant returns (uint remaining);
-    function transfer(address to, uint tokens) public returns (bool success);
-    function approve(address spender, uint tokens) public returns (bool success);
-    function transferFrom(address from, address to, uint tokens) public returns (bool success);
- 
-    event Transfer(address indexed from, address indexed to, uint tokens);
-    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
-}
- 
- 
-//Contract function to receive approval and execute function in one call
- 
-contract ApproveAndCallFallBack {
-    function receiveApproval(address from, uint256 tokens, address token, bytes data) public;
-}
- 
-//Actual token contract
- 
-contract PureGovToken is ERC20Interface, SafeMath {
-    string public symbol;
-    string public  name;
-    uint8 public decimals;
-    uint public _totalSupply;
- 
-    mapping(address => uint) balances;
-    mapping(address => mapping(address => uint)) allowed;
- 
-    constructor() public {
-        symbol = "PTK";
-        name = "Pure Token";
-        decimals = 2;
-        _totalSupply = 100000;
-        balances[0x86aa38D8f565158fd8D7E036bDA62648846966b4] = _totalSupply;
-        emit Transfer(address(0), 0x86aa38D8f565158fd8D7E036bDA62648846966b4, _totalSupply);
-    }
- 
-    function totalSupply() public constant returns (uint) {
-        return _totalSupply  - balances[address(0)];
-    }
- 
-    function balanceOf(address tokenOwner) public constant returns (uint balance) {
-        return balances[tokenOwner];
-    }
- 
-    function transfer(address to, uint tokens) public returns (bool success) {
-        balances[msg.sender] = safeSub(balances[msg.sender], tokens);
-        balances[to] = safeAdd(balances[to], tokens);
-        emit Transfer(msg.sender, to, tokens);
-        return true;
-    }
- 
-    function approve(address spender, uint tokens) public returns (bool success) {
-        allowed[msg.sender][spender] = tokens;
-        emit Approval(msg.sender, spender, tokens);
-        return true;
-    }
- 
-    function transferFrom(address from, address to, uint tokens) public returns (bool success) {
-        balances[from] = safeSub(balances[from], tokens);
-        allowed[from][msg.sender] = safeSub(allowed[from][msg.sender], tokens);
-        balances[to] = safeAdd(balances[to], tokens);
-        emit Transfer(from, to, tokens);
-        return true;
-    }
-    
-    function send(address to, uint tokens) public returns (bool success) {
-        balances[to] = safeAdd(balances[to], tokens);
-    }
+pragma solidity ^0.8.13;
 
-    function allowance(address tokenOwner, address spender) public constant returns (uint remaining) {
-        return allowed[tokenOwner][spender];
-    }
- 
-    function approveAndCall(address spender, uint tokens, bytes data) public returns (bool success) {
-        allowed[msg.sender][spender] = tokens;
-        emit Approval(msg.sender, spender, tokens);
-        ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, this, data);
-        return true;
-    }
- 
-    function () public payable {
-        revert();
-    }
+import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+
+contract PureGovToken is  ERC20, ERC20Burnable {
+  //We inherited the DetailedERC20
+  uint256 public genesisTime;
+
+  constructor(string memory _name, string memory _symbol) ERC20("Pure Governance Token", "PGT") public {
+    genesisTime = block.timestamp;
+  }
+
+  function mintPure(address senderAddress, uint govTokenCount) public {
+      // Convert governance tokens amount to dollasr
+      uint conversionRate = getGovTokenPerDollar();
+      uint256 dollarsSpent = govTokenCount * conversionRate;
+      uint256 currTime = block.timestamp;
+      uint256 monthsSinceGenesis = (currTime - genesisTime) / (60 * 60 * 24 * 30);    
+
+      uint256 inflationAdjustmentNumerator = 1005 ** monthsSinceGenesis;
+      uint256 inflationAdjustmentDenominator = 1000 ** monthsSinceGenesis;
+
+      uint256 inflationAdjustedDollars = dollarsSpent * inflationAdjustmentNumerator;
+      inflationAdjustedDollars = inflationAdjustedDollars / inflationAdjustmentDenominator;
+
+      _mint(senderAddress, inflationAdjustedDollars);
+  }
+
+  function getGovTokenPerDollar() private returns (uint) {
+      return 5; //TODO test
+  }
 }
