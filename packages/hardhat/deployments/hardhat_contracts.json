@@ -167,7 +167,7 @@
       "chainId": "44787",
       "contracts": {
         "Greeter": {
-          "address": "0xD7Da9EE5490223F5c87Ca688CA7D82660bcb85D0",
+          "address": "0x6E5bf051779298B1bF4044d654a777E521bcDCAe",
           "abi": [
             {
               "inputs": [
@@ -241,7 +241,7 @@
           ]
         },
         "Storage": {
-          "address": "0x3D5f9184A6C75F4F777850C4178070dbDA4961eB",
+          "address": "0x95e73d7a2C32bB19950Ab9b7F031A6F09714E797",
           "abi": [
             {
               "anonymous": false,
