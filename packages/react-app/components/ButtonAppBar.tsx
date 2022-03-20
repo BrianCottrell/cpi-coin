@@ -18,7 +18,7 @@ export function ButtonAppBar() {
       <AppBar position="static">
         <Toolbar sx={{ gap: 2 }}>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Celo Dapp Starter
+            Pure Token
           </Typography>
           {network && <Chip label={network.name} color="secondary" />}
           {address && (
