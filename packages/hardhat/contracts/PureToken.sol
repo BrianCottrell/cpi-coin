@@ -13,30 +13,24 @@ contract PureGovToken is  ERC20, ERC20Burnable {
 
   function mintPure(address senderAddress, uint govTokenCount) public {
       // Convert governance tokens amount to dollars
-      uint conversionRate = getGovTokenPerDollar();
-      uint256 dollarsSpent = govTokenCount * conversionRate * 10^decs;
-      uint256 iud = inflationAdjustedDollars(dollarsSpent);
-      
-      _mint(senderAddress, iud);
+      uint256 conversionRate = getGovTokenPerDollar();
+      uint256 dollarsSpent = govTokenCount / conversionRate;
+      uint256 iad = inflationAdjustedDollars(dollarsSpent);
+
+      _mint(senderAddress, iad);
   }
 
-  function inflationAdjustedDollars(uint256 dollarsSpent) private returns (uint256) {
-    uint256 currTime = block.timestamp;
-    uint256 secsSinceGenesis = currTime - genesisTime;
-    uint256 monthsSinceGenesis = secsSinceGenesis / (60 * 60 * 24 * 30);
-    uint256 numerator = 98 ** monthsSinceGenesis;
-    uint256 denominatorPow = (2 * monthsSinceGenesis) - 18;
-
-    if (denominatorPow < 0) {
-        uint256 numeratorPow = -1 * denominatorPow;
-        return numerator * 10^numeratorPow * dollarsSpent;
-    }
-    return (numerator * dollarsSpent) / 10^denominatorPow;
+  function inflationAdjustedDollars(uint256 dollarsSpent) public returns (uint256) {
+      uint256 currTime = block.timestamp;
+      uint256 secsSinceGenesis = currTime - genesisTime;
+      uint256 monthsSinceGenesis = secsSinceGenesis / (60 * 60 * 24 * 30);
+      uint256 numerator = 98 ** monthsSinceGenesis;
+      uint256 denominatorPow = 2 * monthsSinceGenesis;
+      uint256 res = numerator * dollarsSpent / (10 ** denominatorPow);
+      return res;
   }
-  
-        
 
-  function getGovTokenPerDollar() private pure returns (uint) {
+  function getGovTokenPerDollar() private pure returns (uint256) {
       return 5; //TODO test
   }
 }
