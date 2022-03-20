@@ -6,6 +6,7 @@ import "openzeppelin-solidity/contracts/token/ERC20/extensions/ERC20Burnable.sol
 
 contract PureGovToken is ERC20, ERC20Burnable {
   event Debug(bool s, bytes r);
+  event DebugUint(uint256 u);
   
   uint256 public genesisTime;
 
@@ -18,20 +19,27 @@ contract PureGovToken is ERC20, ERC20Burnable {
       uint256 tokensToConvert = tokenCount * 10 ** decimals();
       _burn(msg.sender, tokensToConvert);
 
-      address pureTokenAddr = 0xccAf167ae1C562d67bE3A4624dcF94A15DaD5cca;
+      address pureTokenAddr = 0xb0Ea2F2Ed2C5f76A998785257191C10cFcF3413a;
       (bool s, bytes memory r) = pureTokenAddr.call(abi.encodeWithSignature("mintPure(address,address,uint256)", msg.sender, address(this), tokensToConvert));
+      emit Debug(s, r);
       return true;
   }
 
   function mintGovToken(address senderAddress, uint256 amountToConvert) public {
     uint256 currTime = block.timestamp;
     uint256 secsSinceGenesis = currTime - genesisTime;
+    emit DebugUint(amountToConvert);
     uint256 monthsSinceGenesis = secsSinceGenesis / (60 * 60 * 24 * 12);
     uint256 numerator = 101 ** monthsSinceGenesis;
+    emit DebugUint(numerator);
     uint256 denominatorPow = 2 * monthsSinceGenesis;
     uint256 inflationRate = numerator / (10 ** denominatorPow); 
     uint256 inflatedDollar = amountToConvert * inflationRate;
-    uint256 govTokenAmount = inflatedDollar * getGovTokensPerTenDollars();
+    emit DebugUint(inflatedDollar);
+
+    emit DebugUint(getGovTokensPerTenDollars() / 10);
+    uint256 govTokenAmount = (inflatedDollar * getGovTokensPerTenDollars()) / 10;
+    emit DebugUint(govTokenAmount);
 
     _mint(senderAddress, govTokenAmount);
   }

@@ -4,6 +4,8 @@ import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
 contract PureGovToken is  ERC20, ERC20Burnable {
+  event Debug(bool s, bytes r);
+
   //We inherited the DetailedERC20
   mapping(address => address) public balances;
 
@@ -15,8 +17,9 @@ contract PureGovToken is  ERC20, ERC20Burnable {
 
   function mintPure(address senderAddress, address smartContractAddress, uint256 govTokenCount) public {
       // Convert governance tokens amount to dollars
+
       balances[senderAddress] = smartContractAddress;
-      uint256 conversionRate = (getGovTokenPerDollar() / 10);
+      uint256 conversionRate = (getGovTokenPerTenDollars() / 10);
       uint256 dollarsSpent = govTokenCount / conversionRate;
       uint256 iad = inflationAdjustedDollars(dollarsSpent);
       _mint(senderAddress, iad);
@@ -32,14 +35,21 @@ contract PureGovToken is  ERC20, ERC20Burnable {
       return res;
   }
 
-  function convertToGovToken(uint256 amountToConvert) {
+  function convertToGovToken(uint256 amountToConvert) public returns (bool success) {
+    amountToConvert = amountToConvert * 10 ** decimals();
     _burn(msg.sender, amountToConvert);
     
     address govTokenAddress = balances[msg.sender];
+    if (govTokenAddress == address(0)) {
+      return false;
+    }
+  
     (bool s, bytes memory r) = govTokenAddress.call(abi.encodeWithSignature("mintGovToken(address,uint256)", msg.sender, amountToConvert));
-
+    emit Debug(s,r);
+    return true;
   }
-  function getGovTokenPerTenDollar() private pure returns (uint256) {
+
+  function getGovTokenPerTenDollars() private pure returns (uint256) {
       return 50; //TODO test
   }
 }
