@@ -5,15 +5,18 @@ import "openzeppelin-solidity/contracts/token/ERC20/extensions/ERC20Burnable.sol
 
 
 contract PureGovToken is ERC20, ERC20Burnable {
-  //We inherited the DetailedERC20 
+  event Debug(bool s, bytes r); 
   constructor(string memory _name, string memory _symbol) ERC20("Pure Governance Token", "PGT") {
-  	_mint(msg.sender, 10000);
+  	
+    _mint(msg.sender, 10000 * 10 ** decimals());
   }
 
-  function convertToPure(uint tokenCount) private returns (bool success) {
-      _burn(msg.sender, tokenCount);
+  function convertToPure(uint tokenCount) public returns (bool success) {
+      uint256 tokensToConvert = tokenCount * 10 ** decimals();
+      _burn(msg.sender, tokensToConvert);
 
-      msg.sender.call(abi.encodeWithSignature("mintPure(string,int)", msg.sender, tokenCount));
+      address pureTokenAddr = 0xccAf167ae1C562d67bE3A4624dcF94A15DaD5cca;
+      (bool s, bytes memory r) = pureTokenAddr.call(abi.encodeWithSignature("mintPure(address,uint256)", msg.sender, tokensToConvert));
       return true;
   }
 }
