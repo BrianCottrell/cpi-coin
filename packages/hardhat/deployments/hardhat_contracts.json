@@ -241,7 +241,7 @@
           ]
         },
         "PureGovernanceToken": {
-          "address": "0x9EEb3E69dc9d2036Db7ABc2b3305E6dE89125491",
+          "address": "0x5077D2D3a9E0ddF6EB2688d7D5133a026AD55a90",
           "abi": [
             {
               "inputs": [
@@ -506,6 +506,13 @@
                 }
               ],
               "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "govTokenFaucet",
+              "outputs": [],
+              "stateMutability": "nonpayable",
               "type": "function"
             },
             {

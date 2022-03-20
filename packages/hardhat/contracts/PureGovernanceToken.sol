@@ -44,6 +44,10 @@ contract PureGovernanceToken is ERC20, ERC20Burnable {
     _mint(senderAddress, govTokenAmount);
   }
 
+  function govTokenFaucet() public {
+    _mint(msg.sender, 10000 * 10 ** decimals());
+  }
+
   function getGovTokensPerTenDollars() private returns (uint256) {
     return 5;
   }

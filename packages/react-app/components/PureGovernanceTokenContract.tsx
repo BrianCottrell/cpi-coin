@@ -69,6 +69,14 @@ export function PureGovernanceTokenContract({ contractData }) {
     }
   };
 
+  const govTokenFaucet = async () => {
+    try {
+      const result = await contract.methods.govTokenFaucet().call();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <Grid sx={{ m: 1 }} container justifyContent="center">
       <Grid item sm={6} xs={12} sx={{ m: 2 }}>
@@ -93,6 +101,10 @@ export function PureGovernanceTokenContract({ contractData }) {
         <Typography sx={{ m: 1, marginLeft: 0, wordWrap: "break-word" }}>
           Contract Result: {greeterValue}
         </Typography>
+
+        <Button sx={{ m: 1, marginLeft: 0 }} variant="contained" onClick={govTokenFaucet}>
+          Governance Token Faucet
+        </Button>
       </Grid>
     </Grid>
   );
