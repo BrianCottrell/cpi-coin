@@ -6,7 +6,7 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import { truncateAddress } from "@/utils";
-import { PureTokenContract } from "../../hardhat/types/Greeter";
+import { PureGovernanceToken } from "../../hardhat/types/PureGovernanceToken";
 
 export function PureGovernanceTokenContract({ contractData }) {
   const { kit, address, network, performActions } = useContractKit();
@@ -19,7 +19,7 @@ export function PureGovernanceTokenContract({ contractData }) {
     ? (new kit.web3.eth.Contract(
         contractData.abi,
         contractData.address
-      ) as any as Greeter)
+      ) as any as PureGovernanceToken)
     : null;
 
   useEffect(() => {
@@ -28,15 +28,15 @@ export function PureGovernanceTokenContract({ contractData }) {
     }
   }, [network, contractData]);
 
-  const setGreeter = async () => {
+  const convertToGovToken = async () => {
     try {
       await performActions(async (kit) => {
         const gasLimit = await contract.methods
-          .setGreeting(greeterInput as string)
+          .convertToPure(greeterInput as int)
           .estimateGas();
 
         const result = await contract.methods
-          .setGreeting(greeterInput as string)
+          .convertToGovToken(greeterInput as int)
           //@ts-ignore
           .send({ from: address, gasLimit });
 
@@ -69,28 +69,10 @@ export function PureGovernanceTokenContract({ contractData }) {
     }
   };
 
-  const getGreeter = async () => {
-    try {
-      const result = await contract.methods.greet().call();
-      setGreeterValue(result);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const getGreeterAgain = async () => {
-    try {
-      const result = await contract.methods.greetAgain().call();
-      setGreeterValue(result);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   return (
     <Grid sx={{ m: 1 }} container justifyContent="center">
       <Grid item sm={6} xs={12} sx={{ m: 2 }}>
-        <Typography variant="h5">Greeter Contract:</Typography>
+        <Typography variant="h5">Pure Governance Token Contract:</Typography>
         {contractData ? (
           <Link href={contractLink} target="_blank">
             {truncateAddress(contractData?.address)}
@@ -102,21 +84,15 @@ export function PureGovernanceTokenContract({ contractData }) {
 
         <Typography variant="h6">Write Contract</Typography>
         <Box sx={{ m: 1, marginLeft: 0 }}>{setGreeterInput}</Box>
-        <Button sx={{ m: 1, marginLeft: 0 }} variant="contained" onClick={setGreeter}>
-          Update Greeter Contract
+        <Button sx={{ m: 1, marginLeft: 0 }} variant="contained" onClick={convertToGovToken}>
+          Convert To Pure Token
         </Button>
         <Divider sx={{ m: 1 }} />
 
         <Typography variant="h6">Read Contract</Typography>
         <Typography sx={{ m: 1, marginLeft: 0, wordWrap: "break-word" }}>
-          Greeter Contract Value: {greeterValue}
+          Contract Result: {greeterValue}
         </Typography>
-        <Button sx={{ m: 1, marginLeft: 0 }} variant="contained" onClick={getGreeter}>
-          Read Greeter Contract
-        </Button>
-        <Button sx={{ m: 1, marginLeft: 0 }} variant="contained" onClick={getGreeterAgain}>
-          Greet Again
-        </Button>
       </Grid>
     </Grid>
   );

@@ -29,29 +29,23 @@ export default function App() {
       network?.name?.toLocaleLowerCase()
     ]?.contracts;
 
+    console.log(contracts)
+
   return (
     <div>
       <ButtonAppBar />
       <Box sx={{ width: "100%" }}>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs value={value} onChange={handleChange} aria-label="basic tabs">
-            <Tab label="Storage Contract" {...a11yProps(0)} />
-            <Tab label="Greeter Contract" {...a11yProps(1)} />
-            <Tab label="Pure Token" {...a11yProps(2)} />
-            <Tab label="Pure Governance Token" {...a11yProps(3)} />
+            <Tab label="Pure Token" {...a11yProps(0)} />
+            <Tab label="Pure Governance Token" {...a11yProps(1)} />
           </Tabs>
         </Box>
         <TabPanel value={value} index={0}>
-          <StorageContract contractData={contracts?.Storage} />
+          <PureTokenContract contractData={contracts?.PureToken} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <GreeterContract contractData={contracts?.Greeter} />
-        </TabPanel>
-        <TabPanel value={value} index={2}>
-          <PureTokenContract contractData={contracts?.PureTokenContract} />
-        </TabPanel>
-        <TabPanel value={value} index={3}>
-          <PureGovernanceTokenContract contractData={contracts?.PureGovernanceTokenContract} />
+          <PureGovernanceTokenContract contractData={contracts?.PureGovernanceToken} />
         </TabPanel>
       </Box>
     </div>

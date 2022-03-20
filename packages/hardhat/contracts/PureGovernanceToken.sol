@@ -19,7 +19,7 @@ contract PureGovernanceToken is ERC20, ERC20Burnable {
       uint256 tokensToConvert = tokenCount * 10 ** decimals();
       _burn(msg.sender, tokensToConvert);
 
-      address pureTokenAddr = 0xb0Ea2F2Ed2C5f76A998785257191C10cFcF3413a;
+      address pureTokenAddr = 0x2f53b23De0FF53353cC1cEb704f8022D47e1E310;
       (bool s, bytes memory r) = pureTokenAddr.call(abi.encodeWithSignature("mintPure(address,address,uint256)", msg.sender, address(this), tokensToConvert));
       emit Debug(s, r);
       return true;
